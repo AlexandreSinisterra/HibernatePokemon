@@ -5,11 +5,12 @@ import model.Adestrador;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.*;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdestradorService {
@@ -93,6 +94,48 @@ public class AdestradorService {
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
-
     }
+
+    public ArrayList<Adestrador> leerXMLAdestradores(String fichero) {
+        ArrayList<Adestrador> adestradors = new ArrayList<>();
+        String elementoActual = null;
+        try (FileReader fileReader = new FileReader(fichero)) {
+            XMLStreamReader xmlReader = XMLInputFactory.newDefaultFactory().createXMLStreamReader(fileReader);
+            Adestrador adestrador = null;
+            while (xmlReader.hasNext()) {
+                int evento = xmlReader.next();
+                switch (evento) {
+                    case XMLStreamConstants.START_ELEMENT -> {
+                        elementoActual = xmlReader.getLocalName();
+                        if (elementoActual.equals("adestrador")) {
+                            adestrador = new Adestrador();
+                        }
+                    }
+                    case XMLStreamConstants.CHARACTERS -> {
+                        if (adestrador == null) continue;
+                        if (xmlReader.isWhiteSpace()) continue;   // <-- MUY IMPORTANTE
+                        String valor = xmlReader.getText().trim();
+                        switch (elementoActual) {
+                            case "id" -> adestrador.setId(Integer.parseInt(valor));
+                            case "nome" -> adestrador.setNombre(valor);
+                            case "nacemento" -> adestrador.setFecha(Date.valueOf(valor));
+                        }
+                    }
+                    case XMLStreamConstants.END_ELEMENT -> {
+                        String nombre = xmlReader.getLocalName();
+                        if (nombre.equals("adestrador")) {
+                            adestradors.add(adestrador);
+                            adestrador = null;
+                        }
+                        elementoActual = null;
+                    }
+                }
+            }
+        } catch (XMLStreamException | IOException e) {
+            System.out.println("Error leyendo XML adestradores: " + e.getMessage());
+        }
+        return adestradors;
+    }
+
+
 }

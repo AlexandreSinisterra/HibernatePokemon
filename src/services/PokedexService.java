@@ -1,7 +1,6 @@
 package services;
 
 import config.HibernateConfig;
-import model.Adestrador;
 import model.Pokedex;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -9,8 +8,8 @@ import org.hibernate.Transaction;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PokedexService {
@@ -93,11 +92,34 @@ public class PokedexService {
             xml.writeEndElement();
             xml.writeEndDocument();
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (XMLStreamException e) {
+        } catch (IOException | XMLStreamException e) {
             throw new RuntimeException(e);
         }
-
     }
+
+    public void serializarEntradasPokedex(String fichero, Pokedex... pokedexEntries) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fichero))) {
+            oos.writeInt(pokedexEntries.length);
+            for (Pokedex pokedex : pokedexEntries) {
+                oos.writeObject(pokedex);
+            }
+        } catch (IOException e) {
+            System.out.println("Error serializando Pokedex: " + e.getMessage());
+        }
+    }
+
+    public ArrayList<Pokedex> leerEntradasSerializadas(String fichero, int cantidadLeer) {
+        ArrayList<Pokedex> list = new ArrayList<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fichero))) {
+            int longitud = ois.readInt();
+            for (int i = 0; i < Math.min(longitud, cantidadLeer); i++) {
+                Pokedex p = (Pokedex) ois.readObject();
+                list.add(p);
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Error leyendo serializado: " + e.getMessage());
+        }
+        return list;
+    }
+
 }
