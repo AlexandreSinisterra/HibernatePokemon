@@ -1,14 +1,18 @@
 package app;
 
+import model.Adestrador;
 import model.Pokedex;
+import services.AdestradorService;
 import services.PokedexService;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
         PokedexService pokedexService = new PokedexService();
+        AdestradorService adestradorService = new AdestradorService();
 
         System.out.println("insertando los 10 pokemons");
 
@@ -34,6 +38,14 @@ public class Main {
         pokedexService.insertarPokedex(pokedex9);
         pokedexService.insertarPokedex(pokedex10);
 
+        System.out.println("Insertando adestradores");
+
+        Adestrador adestrador1 = new Adestrador("Red", Date.valueOf("2006-03-22"));
+        Adestrador adestrador2 = new Adestrador("N", Date.valueOf("2006-02-11"));
+
+        adestradorService.insertarAdestrador(adestrador1);
+        adestradorService.insertarAdestrador(adestrador2);
+
         System.out.println("listando pokedex");
 
         List<Pokedex> lista = pokedexService.listarPokedex();
@@ -41,7 +53,23 @@ public class Main {
             System.out.println(p);
         }
 
-        System.out.println("modificando 2 entradas");
+        System.out.println("listando adestradores");
+
+        List<Adestrador> listaAdestrador = adestradorService.listarAdestradores();
+        for (Adestrador a: listaAdestrador){
+            System.out.println(a);
+        }
+
+        System.out.println("modificando 2 adestradores");
+
+        Adestrador adestradorACambiar1 = adestradorService.obtenerPorIdAdestrador(1);
+        Adestrador adestradorACambiar2 = adestradorService.obtenerPorIdAdestrador(2);
+        adestradorACambiar1.setFecha(Date.valueOf("2001-11-09"));
+        adestradorACambiar2.setNombre("n");
+        adestradorService.updateAdestrador(adestradorACambiar1);
+        adestradorService.updateAdestrador(adestradorACambiar2);
+
+        System.out.println("modificando 2 entradas de la pokedex");
 
         Pokedex pokemonACambiar1 = pokedexService.obternerPorIdPokedex(1);
         Pokedex pokemonACambiar2 = pokedexService.obternerPorIdPokedex(2);
@@ -57,6 +85,24 @@ public class Main {
             System.out.println(p);
         }
 
+        System.out.println("listando adestradores2");
+
+        List<Adestrador> listaAdestrador2 = adestradorService.listarAdestradores();
+        for (Adestrador a: listaAdestrador2){
+            System.out.println(a);
+        }
+
+        System.out.println("pasando a xml la pokedes y adestradores");
+
+        List<Pokedex> lista3 = pokedexService.listarPokedex();
+        pokedexService.toXMLPokedex("pokedexXML.xml", lista3.toArray(new Pokedex[0]));
+
+        List<Adestrador> listaAdestrador3 = adestradorService.listarAdestradores();
+        adestradorService.toXMLAdestrador("adestradorXML.xml", listaAdestrador3.toArray(new Adestrador[0]));
+
+        System.out.println("borrando datos");
+
+        adestradorService.eliminarTodosAdestrador();
         pokedexService.eliminarTodosPokedex();
     }
 }

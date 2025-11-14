@@ -2,7 +2,6 @@ package services;
 
 import config.HibernateConfig;
 import model.Adestrador;
-import model.Pokedex;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -13,78 +12,74 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-public class PokedexService {
+public class AdestradorService {
 
-    public void insertarPokedex(Pokedex p){
+    public void insertarAdestrador(Adestrador a){
         Session session = HibernateConfig.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.save(p);
+        session.save(a);
         tx.commit();
         session.close();
     }
 
-    public List<Pokedex> listarPokedex(){
-        Session session = HibernateConfig.getSessionFactory().openSession();
-        List<Pokedex> lista = session.createQuery("From Pokedex", Pokedex.class).list();
-        session.close();
-        return lista;
-    }
-
-    public Pokedex obternerPorIdPokedex(int id){
-        Session session = HibernateConfig.getSessionFactory().openSession();
-        Pokedex pokemon = session.get(Pokedex.class, id);
-        session.close();
-        return pokemon;
-    }
-
-    public void actualizarPokedex(Pokedex p){
+    public void updateAdestrador(Adestrador a){
         Session session = HibernateConfig.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.update(p);
+        session.update(a);
         tx.commit();
         session.close();
     }
 
-    public void eliminarPokedex(Pokedex p){
+    public List<Adestrador> listarAdestradores(){
+        Session session = HibernateConfig.getSessionFactory().openSession();
+        List<Adestrador> adestradors = session.createQuery("From Adestrador", Adestrador.class).list();
+        session.close();
+        return adestradors;
+    }
+
+    public Adestrador obtenerPorIdAdestrador(int id){
+        Session session = HibernateConfig.getSessionFactory().openSession();
+        Adestrador adestradorPorId = session.get(Adestrador.class,id);
+        session.close();
+        return adestradorPorId;
+    }
+
+    public void eliminarAdestrador(Adestrador a){
         Session session = HibernateConfig.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.delete(p);
+        session.delete(a);
         tx.commit();
         session.close();
     }
 
-    public void eliminarTodosPokedex(){
+    public void eliminarTodosAdestrador(){
         Session session = HibernateConfig.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.createQuery("Delete From Pokedex").executeUpdate();
+        session.createQuery("Delete From Adestrador").executeUpdate();
         tx.commit();
         session.close();
     }
 
-    public void toXMLPokedex(String rutaFichero, Pokedex... pokedexes){
+    public void toXMLAdestrador(String rutaFichero, Adestrador... adestradors){
         try(FileWriter writer = new FileWriter(rutaFichero)) {
             XMLStreamWriter xml = XMLOutputFactory.newDefaultFactory().createXMLStreamWriter(writer);
 
             xml.writeStartDocument("1.0");
-            xml.writeStartElement("Pokedex");
+            xml.writeStartElement("Adestradores");
 
-            for (Pokedex pokedex : pokedexes){
-                xml.writeStartElement("pokemon");
+            for (Adestrador adestrador : adestradors){
+                xml.writeStartElement("adestrador");
 
                 xml.writeStartElement("id");
-                xml.writeCharacters(String.valueOf(pokedex.getId()));
+                xml.writeCharacters(String.valueOf(adestrador.getId()));
                 xml.writeEndElement();
 
                 xml.writeStartElement("nome");
-                xml.writeCharacters(pokedex.getNome());
+                xml.writeCharacters(adestrador.getNombre());
                 xml.writeEndElement();
 
-                xml.writeStartElement("peso");
-                xml.writeCharacters(pokedex.getPeso().toString());
-                xml.writeEndElement();
-
-                xml.writeStartElement("Misc");
-                xml.writeCharacters(pokedex.getMisc());
+                xml.writeStartElement("nacemento");
+                xml.writeCharacters(adestrador.getFecha().toString());
                 xml.writeEndElement();
 
                 xml.writeEndElement();
