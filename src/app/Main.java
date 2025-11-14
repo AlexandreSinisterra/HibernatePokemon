@@ -17,6 +17,10 @@ public class Main {
         AdestradorService adestradorService = new AdestradorService();
         PokemonService pokemonService = new PokemonService();
 
+        pokemonService.borrarTodosPokemon();
+        adestradorService.eliminarTodosAdestrador();
+        pokedexService.eliminarTodosPokedex();
+
         System.out.println("insertando los 10 pokemons");
 
         Pokedex pokedex1  = new Pokedex("Bulbasaur",   new BigDecimal("6.90"),  "Un Pokémon planta que almacena energía en su bulbo.");
@@ -50,11 +54,14 @@ public class Main {
         adestradorService.insertarAdestrador(adestrador2);
 
         System.out.println("Insertando 12 pokemons en tabla poekmon");
-
-        pokemonService.crearPokemon(new Pokemon("nombreSinGusto1", Date.valueOf("2020-01-03"), pokedex1, adestrador1));
-        pokemonService.crearPokemon(new Pokemon("nombreSinGusto2", Date.valueOf("2020-01-07"), pokedex2, adestrador1));
-        pokemonService.crearPokemon(new Pokemon("nombreSinGusto3",  Date.valueOf("2020-01-11"), pokedex3, adestrador1));
-        pokemonService.crearPokemon(new Pokemon("nombreSinGusto4",   Date.valueOf("2020-01-15"), pokedex4, adestrador1));
+        Pokemon pokemon1 = new Pokemon("nombreSinGusto1", Date.valueOf("2020-01-03"), pokedex1, adestrador1);
+        Pokemon pokemon2 = new Pokemon("nombreSinGusto2", Date.valueOf("2020-01-07"), pokedex2, adestrador1);
+        Pokemon pokemon3 = new Pokemon("nombreSinGusto3",  Date.valueOf("2020-01-11"), pokedex3, adestrador1);
+        Pokemon pokemon4 = new Pokemon("nombreSinGusto4",   Date.valueOf("2020-01-15"), pokedex4, adestrador1);
+        pokemonService.crearPokemon(pokemon1);
+        pokemonService.crearPokemon(pokemon2);
+        pokemonService.crearPokemon(pokemon3);
+        pokemonService.crearPokemon(pokemon4);
         pokemonService.crearPokemon(new Pokemon("nombreSinGusto5", Date.valueOf("2020-01-19"), pokedex5, adestrador1));
         pokemonService.crearPokemon(new Pokemon("nombreSinGusto6", Date.valueOf("2020-01-23"), pokedex6, adestrador1));
 
@@ -90,16 +97,16 @@ public class Main {
 
         System.out.println("\n--> Exportando dúas entradas da Pokedex SERIALIZADAS");
 
-        pokedexService.serializarEntradasPokedex("pokedex.dat", pokedexService.obternerPorIdPokedex(1) , pokedexService.obternerPorIdPokedex(2) );
+        pokedexService.serializarEntradasPokedex("pokedex.dat", pokedexService.obternerPorIdPokedex(pokedex1.getId()) , pokedexService.obternerPorIdPokedex(pokedex2.getId()) );
 
         System.out.println("--> Exportando dous adestradores a XML");
 
-        adestradorService.toXMLAdestrador("adestradores.xml", adestradorService.obtenerPorIdAdestrador(1), adestradorService.obtenerPorIdAdestrador(2));
+        adestradorService.toXMLAdestrador("adestradores.xml", adestradorService.obtenerPorIdAdestrador(adestrador1.getId()), adestradorService.obtenerPorIdAdestrador(adestrador2.getId()));
 
         System.out.println("modificando 2 adestradores");
 
-        Adestrador adestradorACambiar1 = adestradorService.obtenerPorIdAdestrador(1);
-        Adestrador adestradorACambiar2 = adestradorService.obtenerPorIdAdestrador(2);
+        Adestrador adestradorACambiar1 = adestradorService.obtenerPorIdAdestrador(adestrador1.getId());
+        Adestrador adestradorACambiar2 = adestradorService.obtenerPorIdAdestrador(adestrador2.getId());
         adestradorACambiar1.setFecha(Date.valueOf("2001-11-09"));
         adestradorACambiar2.setNombre("n");
         adestradorService.updateAdestrador(adestradorACambiar1);
@@ -107,8 +114,8 @@ public class Main {
 
         System.out.println("modificando 2 entradas de la pokedex");
 
-        Pokedex pokemonACambiar1 = pokedexService.obternerPorIdPokedex(1);
-        Pokedex pokemonACambiar2 = pokedexService.obternerPorIdPokedex(2);
+        Pokedex pokemonACambiar1 = pokedexService.obternerPorIdPokedex(pokedex1.getId());
+        Pokedex pokemonACambiar2 = pokedexService.obternerPorIdPokedex(pokedex2.getId());
         pokemonACambiar1.setPeso(new BigDecimal("7.00"));
         pokemonACambiar2.setPeso(new BigDecimal("9.00"));
         pokedexService.actualizarPokedex(pokemonACambiar1);
@@ -116,10 +123,10 @@ public class Main {
 
         System.out.println("modificando 4 pokemons");
 
-        Pokemon pokemoncambiando1 = pokemonService.obtenerPorId(1);
-        Pokemon pokemoncambiando2 = pokemonService.obtenerPorId(2);
-        Pokemon pokemoncambiando3 = pokemonService.obtenerPorId(3);
-        Pokemon pokemoncambiando4 = pokemonService.obtenerPorId(4);
+        Pokemon pokemoncambiando1 = pokemonService.obtenerPorId(pokemon1.getId());
+        Pokemon pokemoncambiando2 = pokemonService.obtenerPorId(pokemon2.getId());
+        Pokemon pokemoncambiando3 = pokemonService.obtenerPorId(pokemon3.getId());
+        Pokemon pokemoncambiando4 = pokemonService.obtenerPorId(pokemon4.getId());
 
         pokemoncambiando1.setNombre("nombreEpico1");
         pokemoncambiando2.setNombre("nombreEpico2");
@@ -165,8 +172,7 @@ public class Main {
 
         System.out.println("\n--> Importando datos XML de adestradores");
 
-        List<Adestrador> adestradoresXML =
-                adestradorService.leerXMLAdestradores("adestradores.xml");
+        List<Adestrador> adestradoresXML = adestradorService.leerXMLAdestradores("adestradores.xml");
 
         System.out.println("--> Restaurando adestradores importados");
 

@@ -118,7 +118,10 @@ public class AdestradorService {
                         switch (elementoActual) {
                             case "id" -> adestrador.setId(Integer.parseInt(valor));
                             case "nome" -> adestrador.setNombre(valor);
-                            case "nacemento" -> adestrador.setFecha(Date.valueOf(valor));
+                            case "nacemento" -> {
+                                String soloFecha = valor.substring(0, 10);
+                                adestrador.setFecha(Date.valueOf(soloFecha));
+                            }
                         }
                     }
                     case XMLStreamConstants.END_ELEMENT -> {
